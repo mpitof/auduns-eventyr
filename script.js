@@ -1,7 +1,10 @@
 // Comic state management
 let currentComic = null;
 let totalComics = 0;
-const IMAGE_FOLDER = 'images/comics';
+let IMAGE_FOLDER = 'images/comics';
+
+// Preload cache
+const preloadCache = new Set();
 
 // DOM elements
 const comicImage = document.getElementById('comic-image');
@@ -14,56 +17,35 @@ const lastBtn = document.getElementById('last-btn');
 
 // Initialize on page load
 async function init() {
-    // Find the highest numbered comic
-    totalComics = await findLatestComic();
+    try {
+        // Load config
+        const response = await fetch('comics.json');
+        const config = await response.json();
 
-    if (totalComics === 0) {
-        displayError();
-        return;
-    }
+        totalComics = config.totalComics;
+        IMAGE_FOLDER = config.imageFolder;
 
-    // Load the latest comic by default
-    loadComic(totalComics);
-
-    // Set up event listeners
-    firstBtn.addEventListener('click', () => loadComic(1));
-    prevBtn.addEventListener('click', () => loadComic(currentComic - 1));
-    nextBtn.addEventListener('click', () => loadComic(currentComic + 1));
-    lastBtn.addEventListener('click', () => loadComic(totalComics));
-    randomBtn.addEventListener('click', loadRandomComic);
-
-    // Keyboard navigation
-    document.addEventListener('keydown', handleKeyboard);
-}
-
-// Find the latest comic by trying to load images
-async function findLatestComic() {
-    let maxComic = 0;
-
-    // Check up to 999 (reasonable upper limit)
-    for (let i = 1; i <= 999; i++) {
-        const imageUrl = getImageUrl(i);
-        const exists = await checkImageExists(imageUrl);
-
-        if (exists) {
-            maxComic = i;
-        } else if (i > maxComic + 5) {
-            // If we've checked 5 beyond the last found comic, stop
-            break;
+        if (totalComics === 0) {
+            displayError();
+            return;
         }
+
+        // Load the latest comic by default
+        loadComic(totalComics);
+
+        // Set up event listeners
+        firstBtn.addEventListener('click', () => loadComic(1));
+        prevBtn.addEventListener('click', () => loadComic(currentComic - 1));
+        nextBtn.addEventListener('click', () => loadComic(currentComic + 1));
+        lastBtn.addEventListener('click', () => loadComic(totalComics));
+        randomBtn.addEventListener('click', loadRandomComic);
+
+        // Keyboard navigation
+        document.addEventListener('keydown', handleKeyboard);
+    } catch (error) {
+        console.error('Failed to load config:', error);
+        displayError();
     }
-
-    return maxComic;
-}
-
-// Check if an image exists by trying to load it
-function checkImageExists(url) {
-    return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => resolve(true);
-        img.onerror = () => resolve(false);
-        img.src = url;
-    });
 }
 
 // Get image URL for a comic number
@@ -72,8 +54,31 @@ function getImageUrl(number) {
     return `${IMAGE_FOLDER}/${paddedNumber}.png`;
 }
 
+// Preload adjacent comics for better UX
+function preloadAdjacentComics(number) {
+    const toPreload = [];
+
+    // Preload previous comic
+    if (number > 1) {
+        toPreload.push(number - 1);
+    }
+
+    // Preload next comic
+    if (number < totalComics) {
+        toPreload.push(number + 1);
+    }
+
+    toPreload.forEach(num => {
+        if (!preloadCache.has(num)) {
+            const img = new Image();
+            img.src = getImageUrl(num);
+            preloadCache.add(num);
+        }
+    });
+}
+
 // Load a specific comic
-async function loadComic(number) {
+function loadComic(number) {
     if (number < 1 || number > totalComics) return;
 
     currentComic = number;
@@ -90,6 +95,9 @@ async function loadComic(number) {
         comicNumber.textContent = `#${number}`;
         comicImage.classList.remove('loading');
         updateNavigationButtons();
+
+        // Preload adjacent comics after current comic loads
+        preloadAdjacentComics(number);
     };
     img.onerror = () => {
         displayError();
