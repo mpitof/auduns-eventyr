@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auduns eventyr</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <img src="images/audun_header.png" alt="Auduns eventyr" class="header-image">
+        </header>
+
+        <main class="comic-container">
+            <div class="comic-wrapper">
+                <img id="comic-image" src="" alt="Auduns eventyr" class="comic-image">
+                <div class="comic-number" id="comic-number"></div>
+            </div>
+        </main>
+
+        <nav class="navigation">
+            <button id="first-btn" class="nav-btn" title="Første">|&lt;</button>
+            <button id="prev-btn" class="nav-btn nav-btn-text">&lt; Forrige</button>
+            <button id="random-btn" class="nav-btn nav-btn-random">Tilfeldig</button>
+            <button id="next-btn" class="nav-btn nav-btn-text">Neste &gt;</button>
+            <button id="last-btn" class="nav-btn" title="Siste">|&gt;</button>
+        </nav>
+
+        <footer class="footer">
+            <p class="footer-text">En tegneserie om Audun</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
