@@ -92,7 +92,9 @@ function loadComic(number) {
     img.onload = () => {
         comicImage.src = imageUrl;
         comicImage.alt = `Auduns eventyr #${number}`;
-        comicNumber.textContent = `#${number}`;
+        if (comicNumber) {
+            comicNumber.textContent = `#${number}`;
+        }
         comicImage.classList.remove('loading');
         updateNavigationButtons();
 
@@ -145,7 +147,9 @@ function handleKeyboard(e) {
 
 // Display error message
 function displayError() {
-    comicNumber.textContent = '?';
+    if (comicNumber) {
+        comicNumber.textContent = '?';
+    }
     comicImage.alt = 'Fant ingen tegneserier';
     comicImage.style.display = 'none';
 

@@ -97,20 +97,6 @@ body {
     opacity: 0.5;
 }
 
-.comic-number {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
-    background: var(--color-accent);
-    color: white;
-    padding: 0.35rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    box-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
-    font-family: var(--font-body);
-}
-
 /* Navigation */
 .navigation {
     display: flex;
@@ -279,5 +265,13 @@ body {
 
     .nav-btn-text {
         font-size: 0.85rem;
+    }
+
+    .nav-btn-random {
+        order: 1;
+        width: 100%;
+        max-width: max-content;
+        margin-left: auto;
+        margin-right: auto;
     }
 }
